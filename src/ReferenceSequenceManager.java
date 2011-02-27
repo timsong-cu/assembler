@@ -38,16 +38,18 @@ public class ReferenceSequenceManager {
 			String line = lineScan.nextLine();
 			scanner = new Scanner(line);
 
-			String accessionNo = scanner.next();
-			scanner.next();	//Chromosome number is skipped over
+			if (scanner.hasNext()) {
+				String accessionNo = scanner.next();
+				scanner.next();	//Chromosome number is skipped over
 
-			//Whether the insertion is reverse-complement
-			String rev = scanner.next();
-			boolean reversed = true;
-			if (rev.equals("0") || rev.equalsIgnoreCase("false") || rev.equalsIgnoreCase("fwd")) reversed = false;
+				//Whether the insertion is reverse-complement
+				String rev = scanner.next();
+				boolean reversed = true;
+				if (rev.equals("0") || rev.equalsIgnoreCase("false") || rev.equalsIgnoreCase("fwd")) reversed = false;
 
-			//Adds the next insertion to the List
-			parser.addInsertion(new FileInfo(accessionNo, reversed));
+				//Adds the next insertion to the List
+				parser.addInsertion(new FileInfo(accessionNo, reversed));
+			}
 		}
 	}
 
@@ -75,9 +77,9 @@ public class ReferenceSequenceManager {
 			scan = new Scanner(insertionFile);
 			while (scan.hasNextLine()) {
 				String line = scan.nextLine();
-				
+
 				if (line.startsWith(">") || !scan.hasNextLine()) {
-					if (fileInfo != null && fileInfo.reversed) concatenatedSeq.println(parser.getReversal());
+					if (fileInfo != null && fileInfo.reversed) parser.printReversal(concatenatedSeq);
 					parser.clearReversal();
 					if (fileNameInfo == null) fileLineInfo = parser.lookupByName(line);
 					concatenatedSeq.println(line);
@@ -89,7 +91,7 @@ public class ReferenceSequenceManager {
 					else fileInfo = fileLineInfo;
 
 					if (fileInfo != null) {
-						if (!fileInfo.reversed) concatenatedSeq.println(line);
+						if (!fileInfo.reversed && line.length() > 0) concatenatedSeq.println(line);
 
 						//Reverse the sequence
 						else parser.addReverseCharacters(line);
@@ -98,5 +100,6 @@ public class ReferenceSequenceManager {
 			}
 		}
 		concatenatedSeq.close();
+		System.out.println("Concatenated file successfully created.");
 	}
 }

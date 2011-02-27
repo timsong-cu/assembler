@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 /**
@@ -34,7 +35,7 @@ public class InformationParser {
 	 */
 	public FileInfo lookupByName(String info) {
 		for (FileInfo insertion : insertions) {
-			if (insertion.accessionNo.contains(info)) return insertion;
+			if (info.contains(insertion.accessionNo)) return insertion;
 		}
 		return null;
 	}
@@ -49,39 +50,35 @@ public class InformationParser {
 			char nuc = line.charAt(i);
 			
 			//Change to complementary nucleotide; includes ambiguous nucleotides
-			if (nuc == 'A') nuc = 'T';
-			else if (nuc == 'C') nuc = 'G';
-			else if (nuc == 'G') nuc = 'C';
-			else if (nuc == 'T') nuc = 'A';
-			else if (nuc == 'Y') nuc = 'R';	//Y: C, T
-			else if (nuc == 'R') nuc = 'Y';	//R: A, G
-			else if (nuc == 'W');			//A, T
-			else if (nuc == 'S');			//G, C
-			else if (nuc == 'K') nuc = 'M';	//K: T, G
-			else if (nuc == 'M') nuc = 'K';	//M: C, A
-			else if (nuc == 'D') nuc = 'H';	//D: A, G, T
-			else if (nuc == 'H') nuc = 'D'; //H: A, C, T
-			else if (nuc == 'V') nuc = 'B';	//V: A, C, G
-			else if (nuc == 'B') nuc = 'V';	//B: C, G, T
+			if (nuc == 'A' || nuc == 'a') nuc = 'T';
+			else if (nuc == 'C' || nuc == 'c') nuc = 'G';
+			else if (nuc == 'G' || nuc == 'g') nuc = 'C';
+			else if (nuc == 'T' || nuc == 't') nuc = 'A';
+			else if (nuc == 'Y' || nuc == 'y') nuc = 'R';	//Y: C, T
+			else if (nuc == 'R' || nuc == 'r') nuc = 'Y';	//R: A, G
+			else if (nuc == 'W' || nuc == 'w') nuc = 'W';	//A, T
+			else if (nuc == 'S' || nuc == 's') nuc = 'S';	//G, C
+			else if (nuc == 'K' || nuc == 'k') nuc = 'M';	//K: T, G
+			else if (nuc == 'M' || nuc == 'm') nuc = 'K';	//M: C, A
+			else if (nuc == 'D' || nuc == 'd') nuc = 'H';	//D: A, G, T
+			else if (nuc == 'H' || nuc == 'h') nuc = 'D'; 	//H: A, C, T
+			else if (nuc == 'V' || nuc == 'v') nuc = 'B';	//V: A, C, G
+			else if (nuc == 'B' || nuc == 'b') nuc = 'V';	//B: C, G, T
 			else nuc = 'N';
 			
-			reversal.addFirst(nuc);
+			reversal.addFirst(new Character(nuc));
 		}
 	}
 	
 	
 	/**
-	 * Returns the reverse complement sequence as a String.
-	 * @return the reverse complement sequence
+	 * Prints the reverse complement sequence.
+	 * @param printWriter the Print Writer that is used to print
 	 */
-	public String getReversal() {
-		char[] reversalArray = new char[reversal.size()];
+	public void printReversal(PrintWriter printWriter) {
 		ListIterator<Character> reversalIterator = reversal.listIterator();
-		for (int i=0; i<reversalArray.length; i++) {
-			char nuc = reversalIterator.next();
-			reversalArray[i] = nuc;
-		}
-		return reversalArray.toString();
+		while (reversalIterator.hasNext()) printWriter.print(reversalIterator.next());
+		if (reversal.size() > 0) printWriter.println();
 	}
 	
 	

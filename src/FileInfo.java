@@ -19,6 +19,14 @@ public class FileInfo implements Comparable<FileInfo> {
 	
 	
 	/**
+	 * Returns the accession number; overrides toString() in class Object.
+	 */
+	public String toString() {
+		return accessionNo;
+	}
+	
+	
+	/**
 	 * Orders the files by accession number.
 	 */
 	public int compareTo(FileInfo otherFile) {
