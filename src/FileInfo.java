@@ -18,7 +18,7 @@ public class FileInfo implements Comparable<FileInfo> {
 		this.reversed = reversed;
 		this.start = start;
 		this.end = end;
-		System.err.println(start + "\t" + end);
+		//System.err.println(start + "\t" + end);
 	}
 
 
