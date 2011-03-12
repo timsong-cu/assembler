@@ -90,11 +90,15 @@ public class ReferenceSequenceManager {
 			while (scan.hasNextLine()) {
 				String line = scan.nextLine();
 
-				if (line.startsWith(">") || !scan.hasNextLine()) {
+				if (line.startsWith(">")) {
 					if (fileInfo != null && fileInfo.reversed) parser.printReversal(concatenatedSeq);
+					else if (fileInfo != null) parser.printForward(concatenatedSeq);
 					parser.clearReversal();
 					if (fileNameInfo == null) fileLineInfo = parser.lookupByName(line);
-					if (line.startsWith(">")) concatenatedSeq.println(line);
+					
+					if (fileNameInfo != null) fileInfo = fileNameInfo;
+					else fileInfo = fileLineInfo;
+					if (fileInfo != null) concatenatedSeq.println(line);
 					start = 0;
 					end = 0;
 				}
@@ -108,17 +112,22 @@ public class ReferenceSequenceManager {
 					end = start + line.length() - 1;					
 					int lineStart = 0;
 					
-					if (start <= fileInfo.start && fileInfo.start <= end) lineStart = fileInfo.start;
-					if (fileInfo.start <= end && fileInfo.end <= end) line = line.substring(0, fileInfo.end+1-start); 
+					if (start <= fileInfo.start && fileInfo.start <= end) lineStart = fileInfo.start-1;
+					if (start <= fileInfo.end && fileInfo.end <= end && fileInfo.end >= fileInfo.start) 
+						line = line.substring(0, fileInfo.end+1-start); 
 					line = line.substring(lineStart);
 					if (fileInfo.end < start || end < fileInfo.start) line = "";
 
 					if (fileInfo != null) {
-						if (!fileInfo.reversed && line.length() > 0) parser.addForwardCharacters(line);
-
-						//Reverse the sequence
+						if (!fileInfo.reversed) parser.addForwardCharacters(line);
 						else parser.addReverseCharacters(line);
 					}
+				}
+				
+				if (!scan.hasNextLine()) {
+					if (fileInfo != null && fileInfo.reversed) parser.printReversal(concatenatedSeq);
+					else if (fileInfo != null) parser.printForward(concatenatedSeq);
+					parser.clearReversal();
 				}
 			}
 		}
